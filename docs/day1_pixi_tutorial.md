@@ -1,5 +1,5 @@
 # Day 1: Simplify Your Bioinformatics Workflow with Pixi
-### A Fresh Take on Conda · 09:00 – 12:45
+### A Fresh Take on Conda · 21:00 – 23:00
 
 ---
 
@@ -12,13 +12,15 @@ By the end of today, you will be able to:
 - Set up a Linux terminal on Windows using WSL2 (local alternative)
 - Navigate the terminal with basic Linux commands
 - Install and configure Pixi on your machine
+- Understand the difference between `environment.yml` (Conda) and `pixi.toml` (Pixi)
 - Create a Pixi project and add bioinformatics tools
+- Use all essential Pixi commands — add, remove, update, search, run, shell, and more
 - Define and run tasks from a `pixi.toml` file
 - Share a reproducible environment with collaborators
 
 ---
 
-## Session 1 · Welcome and Introductions (09:00 – 09:15)
+## Session 1 · Welcome and Introductions (21:00 – 21:10)
 
 ### Workshop Ground Rules
 
@@ -58,7 +60,7 @@ conda --version
 
 ---
 
-## Session 2 · Option A — GitHub Codespaces (Recommended) (09:15 – 09:30)
+## Session 2 · Option A — GitHub Codespaces (Recommended) (21:10 – 21:20)
 
 > **This is the recommended path for everyone.** You get a full Ubuntu 22.04 environment with Docker, Java, and Pixi pre-installed — right in your browser. No installation, no OS differences, no "works on my machine" problems.
 
@@ -87,48 +89,42 @@ flowchart TD
 
 Go to https://github.com and sign up for a free account if you do not have one. No payment details are required.
 
-> GitHub gives every free account **120 core-hours per month**. Your full 3-day workshop uses roughly 36 core-hours (9 hours × 4 cores) — well within the free limit.
+> GitHub gives every free account **120 core-hours per month**. The full 3-day workshop uses roughly 6 core-hours — well within the free limit.
 
 ### Step 2: Open the Workshop Codespace
 
-Click the link your instructor shares, or go to the workshop repository and click:
+Click the link below to open the workshop environment directly in your browser:
 
-**Code → Codespaces → Create codespace on main**
+> ### 👉 [Open Workshop Codespace](https://opulent-pancake-6r4p4qjr9xxhrw9w.github.dev/)
 
-```
-┌─────────────────────────────────────┐
-│  <>  Code  ▼                        │
-│  ┌─────────────────────────────┐    │
-│  │ 📋 Local    ☁️ Codespaces   │    │
-│  │                             │    │
-│  │  ✨ Create codespace on main│    │
-│  └─────────────────────────────┘    │
-└─────────────────────────────────────┘
-```
+Or open it manually from the repository page:
 
-The first launch takes **2–3 minutes** as GitHub builds your container. Subsequent launches are much faster because the image is cached.
+1. Go to [github.com/hossainlab/bioinfo_workflow](https://github.com/hossainlab/bioinfo_workflow)
+2. Click the green **`<> Code`** button
+3. Select the **Codespaces** tab
+4. Click **"Create codespace on main"**
+
+> The first launch takes **2–3 minutes** while GitHub builds your container. Subsequent launches open in seconds because the image is cached.
 
 ### Step 3: Understand the Codespace Layout
 
-When the environment opens you will see VS Code in your browser:
+When the environment opens you will see VS Code running in your browser with three main areas:
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│  EXPLORER          │  README.md  ×                          │
-│  📁 ngs-workshop   │                                        │
-│    📄 pixi.toml    │  # Bioinformatics Workflow Bootcamp    │
-│    📄 README.md    │  Welcome! Your environment is ready.  │
-│    📁 data/        │                                        │
-│    📁 scripts/     │                                        │
-│                    │                                        │
-├────────────────────┴────────────────────────────────────────│
-│  TERMINAL                                                   │
-│  @username ➜ /workspaces/ngs-workshop $                    │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+| Area | Location | What it is |
+|------|----------|------------|
+| **File Explorer** | Left sidebar | Browse project files — `pixi.toml`, `docs/`, `data/` |
+| **Editor** | Centre panel | Open and edit files by clicking them |
+| **Terminal** | Bottom panel | Your Linux command line — type commands here |
+
+To open a terminal if it is not visible: go to **Terminal → New Terminal** in the top menu bar, or press `` Ctrl + ` ``.
+
+Your terminal prompt will look like this:
+
+```bash
+@username ➜ /workspaces/bioinfo_workflow $
 ```
 
-The **Terminal panel** at the bottom is your Linux command line. Click inside it and you are ready to go.
+Click inside the terminal and you are ready to go.
 
 ### Step 4: Verify Everything is Pre-installed
 
@@ -166,37 +162,9 @@ Go to https://github.com/codespaces, find your Codespace, and click **Stop**.
 
 > Stopping is different from deleting. A stopped Codespace preserves all your files and resumes in seconds next time. Deleting removes everything permanently.
 
-### The devcontainer.json Behind the Scenes
-
-The workshop environment is defined by a single config file committed to the repo. This is what gives everyone an identical setup:
-
-```json
-{
-  "name": "Bioinformatics Workflow Bootcamp",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
-  "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-    "ghcr.io/devcontainers/features/java:1": { "version": "21" }
-  },
-  "postCreateCommand": "curl -fsSL https://pixi.sh/install.sh | bash && source ~/.bashrc && pixi config set default-channels '[\"conda-forge\",\"bioconda\"]' --global",
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "ms-azuretools.vscode-docker",
-        "charliermarsh.ruff",
-        "ms-python.python"
-      ]
-    }
-  },
-  "remoteUser": "vscode"
-}
-```
-
-> `postCreateCommand` runs once after the container is built. It installs Pixi and configures bioconda channels so everything is ready before you even open the terminal.
-
 ---
 
-## Session 2 · Option B — Setting Up Ubuntu on Windows with WSL2 (09:15 – 09:45)
+## Session 2 · Option B — Setting Up Ubuntu on Windows with WSL2 (21:10 – 21:25)
 
 > **Windows users who prefer a local setup.** If you are using Codespaces, skip this section entirely and go to Session 3.
 
@@ -204,23 +172,7 @@ WSL stands for **Windows Subsystem for Linux**. It lets you run a real Ubuntu Li
 
 ### Why Do We Need Linux for Bioinformatics?
 
-Most bioinformatics tools — FastQC, Samtools, BWA, Nextflow — were built for Linux. They depend on Linux system libraries and shell behavior. While some have Windows ports, they are often incomplete or behave differently. WSL2 gives you a genuine Linux kernel running right inside Windows.
-
-```mermaid
-flowchart TD
-    Win["💻 Your Windows 11 PC"]
-    Win --> WSL["WSL2 Layer<br/>(Linux kernel built into Windows — no VM needed)"]
-    WSL --> Ubuntu["Ubuntu 22.04 LTS<br/>(full Linux distribution)"]
-    Ubuntu --> Terminal["Windows Terminal<br/>(your command line interface)"]
-    Ubuntu --> Pixi["Pixi package manager"]
-    Ubuntu --> Tools["Bioinformatics tools<br/>fastqc · samtools · bwa · nextflow"]
-
-    style Win fill:#E6F1FB,color:#185FA5,stroke:#85B7EB
-    style WSL fill:#EEEDFE,color:#534AB7,stroke:#AFA9EC
-    style Ubuntu fill:#E05A1C,color:#fff,stroke:#C44A10
-    style Terminal fill:#F1EFE8,color:#5F5E5A,stroke:#B4B2A9
-    style Tools fill:#EAF3DE,color:#3B6D11,stroke:#97C459
-```
+Most bioinformatics tools — FastQC, Samtools, BWA, Nextflow — were built for Linux. They depend on Linux system libraries and shell behavior. WSL2 gives you a genuine Linux kernel running right inside Windows.
 
 ### Step 1: Enable WSL2
 
@@ -232,13 +184,11 @@ wsl --install
 
 This single command enables the WSL feature, installs the Linux kernel update, and sets WSL2 as the default. When finished, **restart your computer**.
 
-> **Why restart?** WSL2 installs a kernel component that must be loaded at boot time.
-
 ### Step 2: Install Ubuntu from the Microsoft Store
 
 After restarting, open the **Microsoft Store**, search for **Ubuntu 22.04 LTS**, and click **Install**.
 
-Once installed, launch Ubuntu from the Start menu. The first launch takes 1–2 minutes as it sets up the filesystem. You will be asked to create a username and password:
+Once installed, launch Ubuntu from the Start menu. You will be asked to create a username and password:
 
 ```
 Enter new UNIX username: yourname
@@ -247,68 +197,36 @@ Retype new password:
 passwd: password updated successfully
 ```
 
-> Your WSL password does not need to match your Windows password. Use something simple you will remember.
-
 ### Step 3: Install Windows Terminal
 
-Windows Terminal is a much more comfortable experience than the default Ubuntu window. Install it from the **Microsoft Store** by searching "Windows Terminal". After installation, click the dropdown arrow next to the `+` tab button to open an Ubuntu session.
+Install **Windows Terminal** from the Microsoft Store for a more comfortable experience. After installation, click the dropdown arrow next to the `+` tab to open an Ubuntu session.
 
-### Step 4: Update Ubuntu
-
-Always update the package list immediately after a fresh Ubuntu install:
+### Step 4: Update Ubuntu and Install Essential Tools
 
 ```bash
 sudo apt update && sudo apt upgrade -y
-```
-
-> `sudo` means "run as administrator". `apt` is Ubuntu's built-in package manager. The `-y` flag auto-confirms so you do not need to type "yes" for each package.
-
-### Step 5: Install Essential Tools
-
-```bash
 sudo apt install -y curl wget git unzip zip build-essential
 ```
 
-> These are the foundational utilities used by nearly every bioinformatics installer: `curl` and `wget` download files from the internet, `git` manages code version control, and `build-essential` provides the C compilers some packages need.
+> `sudo` means "run as administrator". These tools are needed by nearly every bioinformatics installer.
 
 ---
 
-## Session 3 · Basic Linux Commands for Everyone (09:45 – 10:15)
+## Session 3 · Basic Linux Commands for Everyone (21:25 – 21:40)
 
-> **Everyone joins here** — whether you are on Codespaces, WSL2, macOS, or native Linux. From this point on, all commands are identical across all platforms.
-
-### The Terminal: Your Scientific Command Center
-
-The terminal is a text interface to your computer. You type a command, press Enter, and the system runs it. For scientific computing, the terminal is far more powerful than clicking through folders.
-
-```mermaid
-flowchart LR
-    You["👤 You<br/>type a command and press Enter"]
-    Shell["🐚 Bash Shell<br/>interprets what you typed"]
-    Kernel["🐧 Linux Kernel<br/>executes the instruction"]
-    Output["📄 Output<br/>printed back to your screen"]
-
-    You --> Shell --> Kernel --> Output
-
-    style You fill:#E6F1FB,color:#185FA5,stroke:#85B7EB
-    style Shell fill:#EEEDFE,color:#534AB7,stroke:#AFA9EC
-    style Kernel fill:#E05A1C,color:#fff,stroke:#C44A10
-    style Output fill:#EAF3DE,color:#3B6D11,stroke:#97C459
-```
+> **Everyone joins here** — Codespaces, WSL2, macOS, or native Linux. All commands are identical across all platforms from this point on.
 
 ### Navigating the Filesystem
-
-The Linux filesystem is a tree. Everything starts from the root `/`. Your home folder is `/home/yourusername`, which you can always write as `~`.
 
 ```bash
 # Where am I right now?
 pwd
-# Output: /home/yourname
+# /home/yourname
 
-# List files and folders in the current directory
+# List files in the current directory
 ls
 
-# List with details: permissions, owner, size, date
+# List with details: permissions, size, date
 ls -la
 
 # Move into a folder
@@ -317,31 +235,14 @@ cd projects
 # Move up one level
 cd ..
 
-# Go directly to your home folder from anywhere
+# Go to your home folder from anywhere
 cd ~
 
 # Jump to an absolute path
-cd /home/yourname/projects/ngs-workshop
+cd /home/yourname/projects
 ```
 
-> **Tip:** Press `Tab` to autocomplete folder and file names. If nothing happens, press `Tab` twice to see all matching options.
-
-### Understanding File Paths
-
-```mermaid
-flowchart TD
-    Root["/ — the root, top of everything"]
-    Root --> Home["/home/"]
-    Root --> Etc["/etc/  system config files"]
-    Root --> Tmp["/tmp/  temporary files"]
-    Home --> User["/home/yourname/  your home folder, also written as ~"]
-    User --> Proj["/home/yourname/projects/"]
-    Proj --> NGS["/home/yourname/projects/ngs-workshop/  your project today"]
-
-    style Root fill:#F1EFE8,color:#5F5E5A,stroke:#B4B2A9
-    style User fill:#E6F1FB,color:#185FA5,stroke:#85B7EB
-    style NGS fill:#EAF3DE,color:#3B6D11,stroke:#97C459
-```
+> **Tip:** Press `Tab` to autocomplete file and folder names. Press `Tab` twice to see all matching options.
 
 ### Creating and Managing Files
 
@@ -349,7 +250,7 @@ flowchart TD
 # Create a new folder
 mkdir my-project
 
-# Create nested folders in one command
+# Create nested folders in one command (-p creates parents too)
 mkdir -p my-project/data/raw
 
 # Create an empty file
@@ -367,35 +268,35 @@ cp notes.txt notes_backup.txt
 # Move or rename a file
 mv notes.txt readme.txt
 
-# Delete a file (no recycle bin — be careful!)
+# Delete a file (no recycle bin — permanent!)
 rm notes_backup.txt
 
-# Delete a folder and everything inside it
+# Delete a folder and all its contents
 rm -rf old-project/
 ```
 
-> **Warning:** `rm -rf` permanently deletes files with no undo. Always double-check the path before running it.
+> **Warning:** `rm -rf` permanently deletes with no undo. Always double-check the path.
 
 ### Viewing Files
 
 ```bash
-# View a large file one screen at a time (press q to quit, arrows to scroll)
+# View a large file one screen at a time (q to quit, arrows to scroll)
 less bigfile.txt
 
-# View the first 10 lines of a file
+# First 10 lines
 head sample.fastq
 
-# View the last 10 lines
+# Last 10 lines
 tail sample.fastq
 
 # Count lines in a file
 wc -l sample.fastq
 
-# Search for a pattern inside a file
+# Search for a pattern
 grep "ATCG" sample.fastq
 ```
 
-### Keyboard Shortcuts Every Bioinformatician Uses
+### Essential Keyboard Shortcuts
 
 | Shortcut | Action |
 |---|---|
@@ -405,26 +306,19 @@ grep "ATCG" sample.fastq
 | `Ctrl + L` | Clear the screen |
 | `Ctrl + A` | Jump to start of the line |
 | `Ctrl + E` | Jump to end of the line |
-| `history` | See all past commands |
+| `history` | Show all past commands |
 
 ---
 
-## ☕ Break (10:15 – 10:25)
+## ☕ Break (21:40 – 21:45)
 
 ---
 
-## Session 4 · Why Package Management Matters (10:25 – 10:50)
+## Session 4 · Why Package Management Matters (21:45 – 21:55)
 
 ### The Problem: Dependency Hell
 
-Imagine you want to run a simple RNA-seq analysis. You need:
-
-- `FastQC` for quality control
-- `STAR` for read alignment
-- `DESeq2` for differential expression (an R package)
-- `samtools` for BAM file handling
-
-Each tool requires specific versions of Python, R, libraries, and compilers. Installing them all on the same machine almost always causes conflicts:
+Imagine you want to run a simple RNA-seq analysis. You need FastQC, STAR, DESeq2, and Samtools. Each tool requires specific versions of Python, R, libraries, and compilers. Installing them all on the same machine almost always causes conflicts:
 
 ```
 ERROR: package 'htslib 1.16' requires 'zlib >= 1.2.11'
@@ -449,74 +343,125 @@ timeline
     2023  : Pixi released with Rust-powered project-based design
 ```
 
-### Where Conda Struggles
+### The Conda Way: environment.yml
 
-```mermaid
-flowchart TD
-    A["You run: conda install samtools"] --> B{"Conda Solver"}
-    B --> C["Checks all installed packages"]
-    B --> D["Checks all channel repos"]
-    C --> E{"Any conflicts?"}
-    D --> E
-    E -->|"No conflict"| F["Download and Install ✅"]
-    E -->|"Conflict found"| G["Attempt to resolve..."]
-    G --> H{"Resolvable?"}
-    H -->|"Yes — takes many minutes"| F
-    H -->|"No"| I["❌ UnsatisfiableError — you are stuck"]
+If you have used Conda before, you are familiar with `environment.yml`. Here is a typical example:
 
-    style I fill:#FCEBEB,color:#A32D2D,stroke:#F09595
-    style F fill:#EAF3DE,color:#3B6D11,stroke:#97C459
-    style G fill:#FAEEDA,color:#854F0B,stroke:#EF9F27
+```yaml
+# environment.yml — the Conda approach
+name: rnaseq-env
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.10
+  - fastqc>=0.12
+  - multiqc>=1.14
+  - samtools>=1.17
+  - pip:
+    - some-python-package
 ```
 
-**Conda's main pain points:**
+**To use it:**
+
+```bash
+# Create the environment
+conda env create -f environment.yml
+
+# Activate it every time you open a terminal
+conda activate rnaseq-env
+
+# Run your tool
+fastqc --version
+
+# Deactivate when done
+conda deactivate
+```
+
+**The problems with this approach:**
 
 | Problem | What happens in practice |
 |---|---|
 | Slow solver | Can take 10–30 minutes to resolve environments |
 | Global state | All environments share one Conda installation |
-| No project isolation | Dependencies from one project affect another |
-| Hard to reproduce | `environment.yml` does not lock exact versions |
-| No task runner | You must write separate shell scripts |
+| No lock file | `environment.yml` records loose version ranges — different installs get different exact versions |
+| No task runner | You must write separate shell scripts for each analysis step |
+| Activation required | You must remember to `conda activate` every session |
+| No project isolation | One broken environment can affect others |
 
-### Enter Pixi: What Is Different?
+### The Pixi Way: pixi.toml
+
+Pixi replaces `environment.yml` with `pixi.toml` — and adds a proper lock file, a built-in task runner, and project isolation:
+
+```toml
+# pixi.toml — the Pixi approach
+[project]
+name = "rnaseq-env"
+channels = ["conda-forge", "bioconda"]
+platforms = ["linux-64"]
+
+[dependencies]
+python = ">=3.10"
+fastqc = ">=0.12"
+multiqc = ">=1.14"
+samtools = ">=1.17"
+
+[tasks]
+qc = "fastqc data/raw/*.fastq.gz -o results/qc/"
+```
+
+**To use it:**
+
+```bash
+# Install the environment (first time only)
+pixi install
+
+# Run your tool — no activation needed
+pixi run fastqc --version
+
+# Run a named task from pixi.toml
+pixi run qc
+
+# Open an interactive shell with the env active
+pixi shell
+```
+
+### Side-by-Side: Conda vs Pixi
+
+| Feature | Conda + environment.yml | Pixi + pixi.toml |
+|---|---|---|
+| Speed | Slow Python solver (minutes) | Fast Rust-based solver (seconds) |
+| Lock file | None — different installs diverge | `pixi.lock` — exact byte-for-byte reproducibility |
+| Project isolation | Shared global environments | Per-project, fully self-contained |
+| Task runner | None — write shell scripts yourself | Built-in `[tasks]` section |
+| Shell activation | `conda activate env` every session | `pixi run cmd` — no activation needed |
+| Sharing | Share `environment.yml` (approximate) | Share `pixi.lock` (exact versions + hashes) |
 
 ```mermaid
 flowchart TD
-    subgraph Traditional["🐍 Traditional Conda Workflow"]
+    subgraph Traditional["🐍 Conda Workflow"]
         A1["conda create -n proj1"] --> B1["conda activate proj1"]
         B1 --> C1["conda install tools..."]
-        C1 --> D1["Save environment.yml<br/>(versions are approximate)"]
+        C1 --> D1["Save environment.yml<br/>(approximate versions)"]
     end
 
     subgraph PixiWay["⚡ Pixi Workflow"]
-        A2["pixi init myproject"] --> B2["pixi.toml created<br/>(your project config)"]
-        B2 --> C2["pixi add samtools fastqc"]
-        C2 --> D2["pixi.lock auto-generated<br/>(exact versions — fully reproducible)"]
-        D2 --> E2["pixi run your-task"]
+        A2["pixi init myproject"] --> B2["pixi.toml created automatically"]
+        B2 --> C2["pixi add fastqc samtools"]
+        C2 --> D2["pixi.lock auto-generated<br/>(exact versions + SHA256 hashes)"]
+        D2 --> E2["pixi run qc"]
     end
 
     style PixiWay fill:#EAF3DE,color:#3B6D11,stroke:#97C459
     style Traditional fill:#FCEBEB,color:#A32D2D,stroke:#F09595
 ```
 
-**Key advantages of Pixi:**
-
-| Feature | Conda | Pixi |
-|---|---|---|
-| Speed | Slow Python solver | Very fast Rust-based solver |
-| Project isolation | Global environments | Per-project, self-contained |
-| Lock file | No | Yes — `pixi.lock` |
-| Task runner | No | Yes — built-in |
-| Shell activation | Required (`conda activate`) | Optional (`pixi run`) |
-
 ---
 
-## Session 5 · Installing Pixi (10:50 – 11:10)
+## Session 5 · Installing and Configuring Pixi (21:55 – 22:05)
 
 ### How Pixi Works Under the Hood
-
-Understanding the flow makes it much easier to debug problems later:
 
 ```mermaid
 flowchart TD
@@ -542,17 +487,17 @@ flowchart TD
     style Project fill:#EAF3DE,color:#3B6D11,stroke:#97C459
 ```
 
-> The cache means packages are downloaded only once. If two projects both use `samtools 1.17`, it is stored once and linked into each project — saving disk space and installation time.
+> Packages are downloaded only once and stored in `~/.pixi/cache`. If two projects both need `samtools 1.17`, the files are shared — saving disk space and install time.
 
-### Install Pixi (Linux, macOS, and WSL2)
+### Installing Pixi
 
-> **Codespaces users:** Pixi is already installed in your environment. Run `pixi --version` to confirm and skip to the channel configuration step below.
+> **Codespaces users:** Pixi is already installed. Run `pixi --version` to confirm and skip to channel configuration below.
+
+**Linux, macOS, and WSL2 — one command:**
 
 ```bash
 curl -fsSL https://pixi.sh/install.sh | bash
 ```
-
-> `curl` downloads the installer script. The `|` pipe passes it directly to `bash` which runs it. This is the standard installation pattern for modern CLI tools.
 
 You will see output ending with:
 
@@ -560,15 +505,21 @@ You will see output ending with:
 Please restart or source your shell.
 ```
 
-Apply the changes immediately without restarting your terminal:
+Apply the change immediately — no need to close the terminal:
 
 ```bash
 source ~/.bashrc
 ```
 
-> `~/.bashrc` is a script that runs every time you open a new terminal session. The Pixi installer adds a line to this file so that `pixi` is found on your PATH. Running `source` re-executes the file in your current session.
+> `~/.bashrc` runs every time you open a new terminal. The Pixi installer adds itself to this file so `pixi` is found on your PATH. `source` re-runs the file in your current session without opening a new one.
 
-**On Windows PowerShell (if not using WSL):**
+**macOS (if you use zsh instead of bash):**
+
+```bash
+source ~/.zshrc
+```
+
+**Windows PowerShell (native, not WSL):**
 
 ```powershell
 iwr -useb https://pixi.sh/install.ps1 | iex
@@ -586,11 +537,22 @@ Expected output:
 pixi 0.x.x
 ```
 
-If you see `command not found`, run `source ~/.bashrc` again, or close and reopen your terminal completely.
+**Troubleshooting — if you see `command not found`:**
+
+```bash
+# Option 1: re-source your shell config
+source ~/.bashrc          # Linux / WSL2
+source ~/.zshrc           # macOS
+
+# Option 2: add pixi to PATH manually this session
+export PATH="$HOME/.pixi/bin:$PATH"
+
+# Option 3: close and reopen the terminal completely, then try again
+```
 
 ### Configure Bioconda as a Default Channel
 
-By default Pixi only searches `conda-forge`. Bioinformatics tools live in `bioconda`. Add both globally so every new project finds bio tools automatically:
+By default Pixi only searches `conda-forge`. Bioinformatics tools live in `bioconda`. Add both globally so every new project finds them automatically:
 
 ```bash
 pixi config set default-channels '["conda-forge", "bioconda"]' --global
@@ -608,156 +570,295 @@ Expected output:
 default-channels = ["conda-forge", "bioconda"]
 ```
 
-> The `--global` flag writes this to `~/.pixi/config.toml`. Without it, the change would only apply to your current project directory.
+> The `--global` flag writes to `~/.pixi/config.toml`. Without it, the change would only apply to your current project directory.
+
+You can also view the config file directly:
+
+```bash
+cat ~/.pixi/config.toml
+```
 
 ---
 
-## Session 6 · Pixi Core Concepts (11:10 – 11:40)
+## Session 6 · Pixi Core Concepts and Commands (22:05 – 22:20)
 
-### The Anatomy of a Pixi Project
-
-Every Pixi project is a folder containing three key files:
+### The Three Files Every Pixi Project Has
 
 ```mermaid
 flowchart TD
     Root["📁 myproject/ — your project folder"]
-    TOML["📄 pixi.toml<br/>The config you write and maintain.<br/>Lists your tools and pipeline tasks."]
-    Lock["🔒 pixi.lock<br/>Auto-generated — never edit this manually.<br/>Records every package with an exact version and hash.<br/>Always commit this file to git."]
-    DotPixi["📁 .pixi/<br/>The actual installed environment.<br/>Never edit. Safe to delete.<br/>Recreated exactly from pixi.lock via pixi install."]
-    Data["📁 data/ — your raw input files"]
-    Results["📁 results/ — your analysis outputs"]
+    TOML["📄 pixi.toml<br/>YOU write and edit this.<br/>Lists tools, channels, and pipeline tasks.<br/>Like environment.yml but with a task runner."]
+    Lock["🔒 pixi.lock<br/>PIXI generates this automatically — never edit it.<br/>Records every package with exact version and SHA256 hash.<br/>Always commit to git."]
+    DotPixi["📁 .pixi/<br/>The actual installed binaries.<br/>Never edit. Safe to delete.<br/>Anyone can recreate it with pixi install."]
 
     Root --> TOML
     Root --> Lock
     Root --> DotPixi
-    Root --> Data
-    Root --> Results
 
     style TOML fill:#E6F1FB,color:#185FA5,stroke:#85B7EB
     style Lock fill:#EEEDFE,color:#534AB7,stroke:#AFA9EC
     style DotPixi fill:#F1EFE8,color:#5F5E5A,stroke:#B4B2A9
-    style Results fill:#EAF3DE,color:#3B6D11,stroke:#97C459
 ```
 
-### Understanding pixi.toml
-
-The `pixi.toml` file has four main sections. Here is a fully annotated example:
+### Understanding pixi.toml — Every Section Explained
 
 ```toml
 [project]
-name = "rnaseq-workshop"
-version = "0.1.0"
-description = "My RNA-seq analysis project"
-channels = ["conda-forge", "bioconda"]
-platforms = ["linux-64", "osx-arm64", "win-64"]
+name = "rnaseq-workshop"       # your project name — no spaces
+version = "0.1.0"              # version of your project
+description = "My RNA-seq analysis"
+channels = ["conda-forge", "bioconda"]  # where to search for packages
+platforms = ["linux-64"]       # which OS platforms this project supports
+                               # linux-64, osx-arm64, osx-64, win-64
 
 [dependencies]
-# >= means "this version or newer"
-# == means "exactly this version"
-fastqc = ">=0.12"
+# Package version specifiers — pick the style that fits your need:
+python = ">=3.10"          # 3.10 or newer (most flexible)
+fastqc = ">=0.12,<1"       # 0.12 or newer, but NOT version 1.x
+samtools = "==1.17"        # exactly version 1.17 (most strict)
+multiqc = "*"              # any version (least strict — not recommended)
 trimmomatic = ">=0.39"
-star = ">=2.7"
-samtools = ">=1.17"
-multiqc = ">=1.14"
-python = ">=3.10"
 
 [tasks]
-# A simple task — runs FastQC on all raw FASTQ files
-qc = "fastqc data/raw/*.fastq.gz -o results/qc/"
+# Simple one-liner task
+qc = "fastqc data/raw/*.fastq.gz -o results/qc/ -t 4"
 
-# depends-on means this task only starts after qc finishes
-trim = { cmd = "trimmomatic PE ...", depends-on = ["qc"] }
+# Task with a dependency — multiqc only runs AFTER qc completes
+multiqc = { cmd = "multiqc results/qc/ -o results/multiqc/", depends-on = ["qc"] }
 
-# A shortcut that chains multiple tasks together
-pipeline = { depends-on = ["qc", "trim"] }
+# Chain multiple tasks together into a full pipeline
+pipeline = { depends-on = ["qc", "multiqc"] }
+
+# Utility task
+clean = "rm -rf results/"
 ```
 
-> Think of `[tasks]` as replacing your shell scripts. Instead of writing a `run_pipeline.sh` file and calling tools directly, you define named tasks here and run them with `pixi run taskname`.
+**Version specifier cheat sheet:**
 
-### What Happens When You Run `pixi add`
+| Specifier | Meaning | Example |
+|---|---|---|
+| `>=1.17` | version 1.17 or newer | `samtools = ">=1.17"` |
+| `==1.17` | exactly version 1.17 | `samtools = "==1.17"` |
+| `>=1.17,<2` | 1.17 or newer, but not 2.0 | `samtools = ">=1.17,<2"` |
+| `*` | any version | `samtools = "*"` |
 
-```mermaid
-sequenceDiagram
-    participant You
-    participant CLI as Pixi CLI
-    participant Solver as Solver
-    participant Channels as Package Channels
-    participant Cache as Local Cache
-    participant Env as .pixi/envs/
+### What pixi.lock Actually Looks Like
 
-    You->>CLI: pixi add samtools
-    CLI->>TOML: Add samtools entry to pixi.toml
-    CLI->>Solver: Resolve full dependency graph
-    Solver->>Channels: Fetch package metadata
-    Channels-->>Solver: Return package info and transitive deps
-    Solver->>Solver: Compute compatible set of all packages
-    Solver-->>CLI: Return full resolved package list
-    CLI->>Cache: Download any missing packages
-    Cache-->>Env: Extract and link packages into .pixi/
-    Env-->>You: samtools is ready to use
-    CLI->>Lock: Update pixi.lock with exact versions and hashes
+When you run `pixi add`, Pixi updates `pixi.lock` automatically. Here is a small snippet so you know what is inside — you never need to edit this file:
+
+```yaml
+# pixi.lock (auto-generated — never edit manually)
+version: 5
+environments:
+  default:
+    packages:
+      linux-64:
+      - conda: https://conda.anaconda.org/bioconda/linux-64/fastqc-0.12.1-hdfd78af_0.conda
+          build: hdfd78af_0
+          build_number: 0
+          name: fastqc
+          sha256: 3a8e4c2d...          # exact hash — guarantees identical download
+          version: 0.12.1
 ```
 
-### Essential Pixi Commands
+> The `sha256` hash is the key to reproducibility. When a colleague runs `pixi install`, Pixi checks that the downloaded file matches this exact hash — byte for byte. If anything has changed, the install fails rather than silently installing the wrong version.
+
+### Migrating from Conda: environment.yml → pixi.toml
+
+If you already have a Conda `environment.yml`, here is how to translate it:
+
+**Your existing `environment.yml`:**
+
+```yaml
+name: myenv
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.10
+  - fastqc>=0.12
+  - samtools>=1.17
+  - multiqc
+```
+
+**Equivalent `pixi.toml`:**
+
+```toml
+[project]
+name = "myenv"
+channels = ["conda-forge", "bioconda"]
+platforms = ["linux-64"]
+
+[dependencies]
+python = ">=3.10"
+fastqc = ">=0.12"
+samtools = ">=1.17"
+multiqc = "*"
+```
+
+Then run `pixi install` — Pixi resolves the full environment and writes a `pixi.lock` with exact versions.
+
+### Complete Pixi Command Reference
+
+#### Starting a Project
 
 ```bash
-# Create a new Pixi project
+# Create a new Pixi project in a new folder
 pixi init myproject
 cd myproject
 
-# Add packages from bioconda or conda-forge
-pixi add samtools
+# Create a Pixi project in the current folder
+pixi init .
+
+# Install the environment from an existing pixi.lock
+# (use this when you clone someone else's project)
+pixi install
+```
+
+#### Adding and Removing Packages
+
+```bash
+# Add one package
+pixi add fastqc
+
+# Add multiple packages at once
+pixi add fastqc multiqc samtools
+
+# Add with a version constraint
 pixi add "samtools>=1.17"
-pixi add fastqc multiqc
 
-# Run a command using the project environment
+# Add an exact version
+pixi add "fastqc==0.12.1"
+
+# Remove a package you no longer need
+pixi remove multiqc
+
+# Remove multiple packages
+pixi remove fastqc multiqc
+```
+
+#### Searching for Packages
+
+```bash
+# Search for a package by name — shows available versions
+pixi search samtools
+
+# Search in a specific channel
+pixi search samtools --channel bioconda
+
+# Search for packages matching a keyword
+pixi search "bwa"
+```
+
+#### Updating Packages
+
+```bash
+# Update one package to the latest version that satisfies your constraints
+pixi update samtools
+
+# Update all packages
+pixi update
+
+# Update and also update the lock file
+pixi update --manifest-path pixi.toml
+```
+
+#### Running Commands and Tasks
+
+```bash
+# Run any tool from your project environment (no activation needed)
+pixi run fastqc --version
 pixi run samtools --version
+pixi run python --version
 pixi run python myscript.py
-pixi run qc
 
-# Open an interactive shell with the environment activated
+# Run a named task defined in [tasks]
+pixi run qc
+pixi run multiqc
+pixi run pipeline
+
+# Open an interactive shell with your environment activated
+# (like conda activate, but only for this project)
 pixi shell
 
-# Inspect your project
-pixi list
-pixi info
-pixi task list
-
-# Recreate the environment from pixi.lock on any machine
-pixi install
-
-# Delete the installed environment (safe — recreate with pixi install)
-pixi clean
+# When inside pixi shell, you can run tools directly without pixi run:
+fastqc --version
+samtools --version
+exit   # or Ctrl+D to leave the shell
 ```
+
+#### Inspecting Your Project
+
+```bash
+# List all installed packages with their exact versions
+pixi list
+
+# Show detailed project info: environment path, channels, platforms
+pixi info
+
+# List all tasks defined in pixi.toml
+pixi task list
+```
+
+#### Cleaning Up
+
+```bash
+# Remove the installed environment (.pixi/ folder)
+# Safe to do — recreate at any time with pixi install
+pixi clean
+
+# What to commit to git (always):
+#   pixi.toml
+#   pixi.lock
+#
+# What NOT to commit (add to .gitignore):
+#   .pixi/
+#   results/
+#   data/raw/*.fastq.gz
+```
+
+#### Installing Tools Globally (Without a Project)
+
+Sometimes you just want a tool available everywhere on your machine — similar to `conda install` in the base environment:
+
+```bash
+# Install a tool globally (available in any terminal, not tied to a project)
+pixi global install fastqc
+pixi global install samtools
+
+# List globally installed tools
+pixi global list
+
+# Remove a globally installed tool
+pixi global remove fastqc
+```
+
+> Use `pixi global` sparingly. For reproducible science, prefer creating a project with `pixi init` so your environment is tracked and shareable.
 
 ---
 
-## Session 7 · Lab: Your First Pixi Project (11:40 – 12:10)
+## Session 7 · Lab: Your First Pixi Project (22:20 – 22:45)
 
 ### Lab Goal
 
-Build a Pixi project that runs FastQC and MultiQC on sample FASTQ files. This is your first automated, reproducible bioinformatics workflow.
+Build a Pixi project that runs FastQC and MultiQC on real public FASTQ files. By the end you will have a working, reproducible quality-control pipeline you can adapt to your own data.
 
 ### Step 1: Create the Project
 
 ```bash
-# Create a new folder and enter it
+# Create a new folder and initialize a Pixi project in it
 mkdir ngs-workshop && cd ngs-workshop
-
-# Initialize a Pixi project in this folder
 pixi init .
 ```
 
-> The `.` means "current directory". Pixi creates a `pixi.toml` file here. You can also run `pixi init ngs-workshop` from the parent folder to create and initialize in one step.
-
-Look at what was created:
+Inspect what was created:
 
 ```bash
 ls -la
 cat pixi.toml
 ```
 
-You should see an initial `pixi.toml`:
+You will see the initial `pixi.toml`:
 
 ```toml
 [project]
@@ -772,37 +873,86 @@ platforms = ["linux-64"]
 [dependencies]
 ```
 
-### Step 2: Add Bioinformatics Tools
+> Pixi pre-fills the channels from your global config. Because you set `conda-forge` and `bioconda` earlier, both appear here automatically.
+
+### Step 2: Search for and Add Tools
+
+Let us practice `pixi search` before adding packages:
+
+```bash
+# Search for fastqc — check what versions are available
+pixi search fastqc
+
+# Search for multiqc
+pixi search multiqc
+```
+
+Now add both tools:
 
 ```bash
 pixi add fastqc multiqc
 ```
 
-> Pixi resolves the full dependency graph for both tools. FastQC needs Java; MultiQC needs Python and several Python packages. Pixi handles all of this automatically and records every resolved package in `pixi.lock`.
+Watch Pixi resolve the dependency graph — it finds Java for FastQC and Python + dependencies for MultiQC, all in seconds.
 
-Verify the tools are available:
+Verify both tools are available:
 
 ```bash
 pixi run fastqc --version
 # FastQC v0.12.1
 
 pixi run multiqc --version
-# multiqc, version 1.14
+# multiqc, version 1.x.x
 ```
 
-### Step 3: Create Your Project Folder Structure
+Check your `pixi.toml` — it was updated automatically:
 
-Good folder organization is a habit that saves enormous confusion later:
+```bash
+cat pixi.toml
+```
+
+```toml
+[project]
+name = "ngs-workshop"
+version = "0.1.0"
+description = ""
+channels = ["conda-forge", "bioconda"]
+platforms = ["linux-64"]
+
+[tasks]
+
+[dependencies]
+fastqc = ">=0.12.1,<0.13"
+multiqc = ">=1.14,<2"
+```
+
+And check that `pixi.lock` was created:
+
+```bash
+ls -la pixi.lock   # should show a large file — hundreds of lines
+```
+
+### Step 3: Create Project Folder Structure
 
 ```bash
 mkdir -p data/raw results/qc results/multiqc
 ```
 
-> The `-p` flag creates all parent directories that do not yet exist. Without `-p`, running `mkdir data/raw` would fail if `data/` does not already exist.
+Your project now looks like:
 
-### Step 4: Download Test Data
+```
+ngs-workshop/
+├── pixi.toml
+├── pixi.lock
+├── .pixi/          <- installed tools live here
+├── data/
+│   └── raw/        <- put FASTQ files here
+└── results/
+    ├── qc/         <- FastQC outputs go here
+    └── multiqc/    <- MultiQC report goes here
+```
 
-Download small public FASTQ files from the nf-core test dataset repository:
+### Step 4: Download Test FASTQ Data
 
 ```bash
 cd data/raw
@@ -814,11 +964,11 @@ cd ../..
 ls data/raw/
 ```
 
-> `-L` tells curl to follow HTTP redirects (GitHub uses these). `-O` saves the file with its original name. These two files are **paired-end reads**: `_1` is the forward read and `_2` is the reverse read from the same sequencing run.
+> These two files are **paired-end reads** — `_1` is the forward read and `_2` is the reverse read from the same sequencing experiment. `-L` tells curl to follow redirects; `-O` saves the file with its original name.
 
 ### Step 5: Add Tasks to pixi.toml
 
-Open `pixi.toml` in the nano text editor:
+Open `pixi.toml` in the text editor:
 
 ```bash
 nano pixi.toml
@@ -830,12 +980,25 @@ Replace the empty `[tasks]` section with:
 [tasks]
 qc = "fastqc data/raw/*.fastq.gz -o results/qc/ -t 4"
 multiqc = { cmd = "multiqc results/qc/ -o results/multiqc/", depends-on = ["qc"] }
+pipeline = { depends-on = ["qc", "multiqc"] }
 clean = "rm -rf results/"
 ```
 
-Save: press `Ctrl+O` then Enter, then exit with `Ctrl+X`.
+Save: press `Ctrl+O` then `Enter`, then exit with `Ctrl+X`.
 
-> The `depends-on = ["qc"]` key makes `multiqc` wait for `qc` to complete first. This turns your task list into a mini pipeline. The `-t 4` flag tells FastQC to use 4 CPU threads.
+Confirm your tasks registered:
+
+```bash
+pixi task list
+```
+
+```
+Tasks:
+  clean
+  multiqc
+  pipeline
+  qc
+```
 
 ### Step 6: Run the Pipeline
 
@@ -843,32 +1006,31 @@ Save: press `Ctrl+O` then Enter, then exit with `Ctrl+X`.
 # Run only FastQC
 pixi run qc
 
-# Run MultiQC (this automatically triggers qc first due to depends-on)
+# Run MultiQC — this automatically runs qc first due to depends-on
 pixi run multiqc
+
+# Or run both in the correct order with a single command
+pixi run pipeline
 ```
 
-Watch the output scroll by. FastQC processes both files, then MultiQC aggregates the results into a single report.
+FastQC processes both FASTQ files in parallel, then MultiQC aggregates all results into one HTML report.
 
-### Step 7: Open Your Results
+### Step 7: Explore the Results
 
 ```bash
 ls results/qc/
 ls results/multiqc/
 ```
 
-**On Codespaces:** Right-click `results/multiqc/multiqc_report.html` in the VS Code file explorer on the left, then choose **Open with Live Server** or simply click the file — VS Code will offer to open it in a browser tab via port forwarding automatically.
-
-Alternatively, use the terminal:
+**On Codespaces:** In the VS Code file explorer on the left, find `results/multiqc/multiqc_report.html`, right-click it, and choose **Open with Live Server** or click it directly — VS Code opens it in your browser automatically.
 
 ```bash
-# Codespaces: open the file browser panel and click the HTML file directly
-# Or run a quick local server:
-cd results/multiqc
-python3 -m http.server 8080
-# Then click the "Open in Browser" pop-up that appears in the bottom-right corner
+# Or serve it from the terminal:
+cd results/multiqc && python3 -m http.server 8080
+# Click the "Open in Browser" pop-up in the bottom-right corner of VS Code
 ```
 
-**On WSL2 (Windows):** Open the HTML report in your Windows browser:
+**On WSL2 (Windows):**
 
 ```bash
 explorer.exe results/multiqc/multiqc_report.html
@@ -880,19 +1042,23 @@ explorer.exe results/multiqc/multiqc_report.html
 open results/multiqc/multiqc_report.html
 ```
 
-**On native Linux:**
+### Step 8: Inspect the Full Lock File
+
+Look at a few lines of `pixi.lock` to understand what exact reproducibility means:
 
 ```bash
-xdg-open results/multiqc/multiqc_report.html
+head -50 pixi.lock
 ```
+
+You will see URLs, exact version numbers, and SHA256 hashes for every package. This is what guarantees that your collaborator gets the identical environment.
 
 ### Final Project Structure
 
 ```
 ngs-workshop/
-├── pixi.toml              <- your config (edit this)
-├── pixi.lock              <- auto-generated (commit this to git)
-├── .pixi/                 <- installed environment (never edit or commit)
+├── pixi.toml              ← your config (edit this)
+├── pixi.lock              ← auto-generated (always commit to git)
+├── .pixi/                 ← installed environment (never commit — add to .gitignore)
 ├── data/
 │   └── raw/
 │       ├── SRR493366_1.fastq.gz
@@ -902,28 +1068,26 @@ ngs-workshop/
     │   ├── SRR493366_1_fastqc.html
     │   └── SRR493366_2_fastqc.html
     └── multiqc/
-        └── multiqc_report.html   <- open this in your browser
+        └── multiqc_report.html    ← open this in your browser
 ```
 
 ---
 
-## Session 8 · Reproducibility and Sharing (12:10 – 12:30)
+## Session 8 · Reproducibility and Sharing (22:45 – 22:55)
 
-### Why Reproducibility Matters
-
-Science requires that results can be independently verified. In bioinformatics, a result is only reproducible if the exact same software versions were used. `pixi.lock` makes this guaranteed.
+### Why pixi.lock Changes Everything
 
 ```mermaid
 flowchart LR
-    subgraph Conda["❌ Conda — Loose Reproducibility"]
+    subgraph Conda["❌ Conda — Approximate Reproducibility"]
         A1["environment.yml<br/>fastqc>=0.11"] --> B1["conda env create"]
-        B1 --> C1["Resolves AT INSTALL TIME<br/>Different versions each time<br/>depending on when you install"]
+        B1 --> C1["Resolves AT INSTALL TIME<br/>You get v0.11 today<br/>Colleague gets v0.12 next month"]
     end
 
     subgraph PixiR["✅ Pixi — Exact Reproducibility"]
         A2["pixi.toml<br/>fastqc>=0.11"] --> B2["pixi add fastqc"]
-        B2 --> C2["pixi.lock records every package<br/>with exact URL and SHA256 hash"]
-        C2 --> D2["Anyone running pixi install<br/>gets the byte-for-byte same environment"]
+        B2 --> C2["pixi.lock records exact URL<br/>version and SHA256 hash"]
+        C2 --> D2["Anyone running pixi install<br/>gets the byte-identical environment"]
     end
 
     style PixiR fill:#EAF3DE,color:#3B6D11,stroke:#97C459
@@ -944,85 +1108,133 @@ sequenceDiagram
 
     Colleague->>Git: git clone your-repo
     Colleague->>Colleague: pixi install
-    Note over Colleague: Reads pixi.lock and downloads<br/>the exact same packages
-    Colleague->>Colleague: pixi run multiqc
+    Note over Colleague: Reads pixi.lock<br/>Downloads exact same packages
+    Colleague->>Colleague: pixi run pipeline
     Note over Colleague: Identical results — guaranteed
 ```
 
-### What to Commit and What to Ignore
+### Set Up .gitignore
 
-Create a `.gitignore` file to keep your repository clean:
+Create a `.gitignore` to keep your repository clean:
 
 ```bash
 cat > .gitignore << 'EOF'
-# Always commit: pixi.toml, pixi.lock, scripts/, small data files
-
-# Never commit these:
+# Pixi environment — can be recreated from pixi.lock
 .pixi/
+
+# Analysis outputs — usually too large for git
 results/
+
+# Raw data — usually too large for git
+data/raw/*.fastq.gz
+data/raw/*.bam
+
+# Log files
 *.log
 *.tmp
 EOF
 ```
 
-> The `.pixi/` folder contains gigabytes of installed binaries. Never commit it. Anyone can recreate it exactly from `pixi.lock` by running `pixi install`.
+**What to always commit:**
+
+| File | Why |
+|---|---|
+| `pixi.toml` | Your tool list and task definitions |
+| `pixi.lock` | Exact versions for full reproducibility |
+| `scripts/` | Your analysis scripts |
+| Small reference files | If they are small enough |
+
+**What to never commit:**
+
+| File | Why |
+|---|---|
+| `.pixi/` | Gigabytes of binaries — regenerated by `pixi install` |
+| `results/` | Outputs are regenerated by running the pipeline |
+| Large data files | Use a data repository (Zenodo, SRA) instead |
 
 ---
 
-## Session 9 · Q&A and Day 1 Recap (12:30 – 12:45)
+## Session 9 · Q&A and Day 1 Recap (22:55 – 23:00)
 
 ### What We Covered Today
 
 ```mermaid
 mindmap
   root((Day 1))
-    Linux on Windows
-      WSL2 installation
-      Ubuntu 22.04 setup
-      Windows Terminal
-    Basic Linux
-      Navigation with cd ls pwd
-      File management mkdir cp mv rm
-      Viewing files with cat less grep
+    Setup
+      GitHub Codespaces
+      WSL2 on Windows
+      Terminal basics
     Why Pixi
-      Dependency hell explained
-      Conda limitations
+      Dependency hell
+      environment.yml limitations
       Lock file reproducibility
-    Pixi Setup
-      One-line install
+    Installation
+      curl install one-liner
       source bashrc
-      Global bioconda channel config
+      Global bioconda channel
+      Troubleshooting
     Core Concepts
-      pixi.toml structure
-      pixi.lock purpose
-      .pixi env folder
-      Task runner with depends-on
-    Lab Results
-      pixi init and pixi add
-      FastQC and MultiQC tasks
+      pixi.toml vs environment.yml
+      pixi.lock contents
+      .pixi environment folder
+    Commands
+      init add remove update search
+      run shell list info
+      clean install global
+    Tasks
+      Simple commands
+      depends-on ordering
+      pipeline chains
+    Lab
+      FastQC and MultiQC
+      Search before adding
       Open HTML reports
+    Sharing
+      gitignore setup
+      pixi install from lock
 ```
 
-### Day 1 Quick Reference
+### Day 1 Complete Command Reference
 
-| Task | Command / Action |
+| Task | Command |
 |---|---|
-| Launch workshop environment | Click Codespace link → **Create codespace on main** |
-| Stop Codespace after session | https://github.com/codespaces → **Stop** |
-| New Pixi project | `pixi init myproject` |
-| Add a package | `pixi add fastqc` |
-| Add with version constraint | `pixi add "samtools>=1.17"` |
-| Run a binary | `pixi run samtools --version` |
-| Run a named task | `pixi run qc` |
-| Open interactive shell | `pixi shell` |
-| List installed packages | `pixi list` |
-| Recreate env from lock | `pixi install` |
-| Open HTML in Codespaces | Right-click file → Open in browser |
-| Open HTML in Windows WSL | `explorer.exe file.html` |
-| Open HTML on macOS | `open file.html` |
+| **Setup** | |
+| Install Pixi | `curl -fsSL https://pixi.sh/install.sh \| bash` |
+| Apply install | `source ~/.bashrc` |
+| Set global channels | `pixi config set default-channels '["conda-forge","bioconda"]' --global` |
+| Check config | `pixi config list --global` |
+| **Projects** | |
+| New project | `pixi init myproject` |
+| Install from lock | `pixi install` |
+| **Packages** | |
+| Search | `pixi search samtools` |
+| Add | `pixi add fastqc multiqc` |
+| Add with version | `pixi add "samtools>=1.17"` |
+| Remove | `pixi remove multiqc` |
+| Update | `pixi update samtools` |
+| Update all | `pixi update` |
+| **Running** | |
+| Run a tool | `pixi run fastqc --version` |
+| Run a task | `pixi run qc` |
+| Interactive shell | `pixi shell` |
+| **Inspecting** | |
+| List packages | `pixi list` |
+| Project info | `pixi info` |
+| List tasks | `pixi task list` |
+| **Cleanup** | |
+| Delete env | `pixi clean` |
+| Global install | `pixi global install fastqc` |
+| **Codespaces** | |
+| Open environment | https://opulent-pancake-6r4p4qjr9xxhrw9w.github.dev/ |
+| Stop Codespace | https://github.com/codespaces → Stop |
+
+---
 
 ### Preview: Day 2
 
 Tomorrow we answer: **"Pixi sets up tools on my laptop — but what if I need to run on an HPC cluster, a colleague's server, or the cloud where I cannot install Pixi?"**
 
-That is where Docker comes in. See you tomorrow! 🐳
+That is where Docker comes in. We will package tools and their entire runtime into a container that runs identically on any machine — no installation required on the target system.
+
+See you tomorrow! 🐳
